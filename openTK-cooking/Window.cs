@@ -67,8 +67,12 @@ public class Window : GameWindow
     protected override void OnRenderFrame(FrameEventArgs e)
     {
         base.OnRenderFrame(e);
-
+        
         GL.Clear(ClearBufferMask.ColorBufferBit);
+        
+        _shader.Use();
+        GL.BindVertexArray(_vertexArrayObject);
+        GL.DrawArrays(PrimitiveType.Triangles, 0, 3);
 
         SwapBuffers();
     }
