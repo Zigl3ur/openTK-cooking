@@ -13,7 +13,12 @@
     </ItemGroup>
 
     <ItemGroup>
-      <Folder Include="Ressources\Shaders\" />
+      <None Include="bin\Debug\net8.0\shader.frag" />
+      <None Include="bin\Debug\net8.0\shader.vert" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <Folder Include="bin\Debug\net8.0\" />
     </ItemGroup>
 
 </Project>

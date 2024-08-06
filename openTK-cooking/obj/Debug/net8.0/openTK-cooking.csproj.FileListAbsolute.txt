@@ -29,3 +29,4 @@ C:\Users\Edend\OneDrive\Bureau\Eden\dev\openTK-cooking\openTK-cooking\obj\Debug\
 C:\Users\Edend\OneDrive\Bureau\Eden\dev\openTK-cooking\openTK-cooking\obj\Debug\net8.0\openTK-cooking.pdb
 C:\Users\Edend\OneDrive\Bureau\Eden\dev\openTK-cooking\openTK-cooking\obj\Debug\net8.0\openTK-cooking.genruntimeconfig.cache
 C:\Users\Edend\OneDrive\Bureau\Eden\dev\openTK-cooking\openTK-cooking\obj\Debug\net8.0\ref\openTK-cooking.dll
+C:\Users\Edend\OneDrive\Bureau\Eden\dev\openTK-cooking\openTK-cooking\obj\Debug\net8.0\openTK-cooking.sourcelink.json
