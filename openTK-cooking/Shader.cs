@@ -4,7 +4,8 @@ namespace openTK_cooking;
 
 public class Shader
 {
-    private int _handle;
+    // _handle is the result of the both shaders compiled
+    private readonly int _handle;
     private bool _disposedValue;
 
     public Shader(string vertexPath, string fragmentPath)
