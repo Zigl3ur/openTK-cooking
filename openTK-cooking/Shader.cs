@@ -10,12 +10,12 @@ public class Shader
 
     public Shader(string vertexPath, string fragmentPath)
     {
-        
+
         string vertexShaderSource = File.ReadAllText(vertexPath);
         string fragmentShaderSource = File.ReadAllText(fragmentPath);
 
         int vertexShader = GL.CreateShader(ShaderType.VertexShader);
-        GL.ShaderSource(vertexShader ,vertexShaderSource);
+        GL.ShaderSource(vertexShader, vertexShaderSource);
 
         int fragmentShader = GL.CreateShader(ShaderType.FragmentShader);
         GL.ShaderSource(fragmentShader, fragmentShaderSource);
@@ -28,7 +28,7 @@ public class Shader
             string infoLog = GL.GetShaderInfoLog(vertexShader);
             Console.WriteLine(infoLog);
         }
-        
+
         // compile fragment shader and log
         GL.CompileShader(fragmentShader);
         GL.GetShader(fragmentShader, ShaderParameter.CompileStatus, out int successFragmentShader);
@@ -38,22 +38,22 @@ public class Shader
             Console.WriteLine(infoLog);
         }
 
-        
+
         // link both shaders together
         _handle = GL.CreateProgram();
-        
+
         GL.AttachShader(_handle, vertexShader);
         GL.AttachShader(_handle, fragmentShader);
-        
+
         GL.LinkProgram(_handle);
-        
+
         GL.GetProgram(_handle, GetProgramParameterName.LinkStatus, out int shadersLinkSuccess);
         if (shadersLinkSuccess == 0)
         {
             string infoLog = GL.GetProgramInfoLog(_handle);
             Console.WriteLine(infoLog);
         }
-        
+
         // clean up
         GL.DetachShader(_handle, vertexShader);
         GL.DetachShader(_handle, fragmentShader);
@@ -61,12 +61,14 @@ public class Shader
         GL.DeleteShader(fragmentShader);
     }
 
-    // use the shader
+    /// <summary>
+    /// use the shader
+    /// </summary>
     public void Use()
     {
         GL.UseProgram(_handle);
     }
-    
+
     protected virtual void Dispose(bool disposing)
     {
         if (!_disposedValue)
@@ -77,7 +79,9 @@ public class Shader
         }
     }
 
-    // destructor
+    /// <summary>
+    /// destructor
+    /// </summary>
     ~Shader()
     {
         if (_disposedValue)
@@ -85,8 +89,10 @@ public class Shader
             Console.WriteLine("GPU Resource leak! Did you forget to call Dispose()?");
         }
     }
-    
-    // clean it
+
+    /// <summary>
+    /// clean it
+    /// </summary>
     public void Dispose()
     {
         Dispose(true);
