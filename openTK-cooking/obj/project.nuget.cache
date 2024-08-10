@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "dgSpecHash": "S7Ag5Wd5mWrFX5JKd7nUywEAlTd1ljeuAvCbZK+oI9fjWIRYgbClO7lnUoe7Pw8EZdnsf+6XH1amVbYHiYG78Q==",
+  "dgSpecHash": "Plq+5+k9k6/fHtQmciHEBZduf5fgwxaKQXcasSKcE/9Pdm0aHkUfDn4vrcs++b8YU17N4MIh8JzaQqKrWlcHOA==",
   "success": true,
   "projectFilePath": "C:\\Users\\Edend\\OneDrive\\Bureau\\Eden\\dev\\openTK-cooking\\openTK-cooking\\openTK-cooking.csproj",
   "expectedPackageFiles": [
@@ -15,6 +15,7 @@
     "C:\\Users\\Edend\\.nuget\\packages\\opentk.windowing.common\\4.8.2\\opentk.windowing.common.4.8.2.nupkg.sha512",
     "C:\\Users\\Edend\\.nuget\\packages\\opentk.windowing.desktop\\4.8.2\\opentk.windowing.desktop.4.8.2.nupkg.sha512",
     "C:\\Users\\Edend\\.nuget\\packages\\opentk.windowing.graphicslibraryframework\\4.8.2\\opentk.windowing.graphicslibraryframework.4.8.2.nupkg.sha512",
+    "C:\\Users\\Edend\\.nuget\\packages\\stbimagesharp\\2.27.14\\stbimagesharp.2.27.14.nupkg.sha512",
     "C:\\Users\\Edend\\.nuget\\packages\\system.runtime.compilerservices.unsafe\\5.0.0\\system.runtime.compilerservices.unsafe.5.0.0.nupkg.sha512"
   ],
   "logs": []

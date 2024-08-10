@@ -7,11 +7,13 @@ namespace openTK_cooking
 {
     public class Window : GameWindow
     {
-        private int _vertexBufferObject;
-        private int _vertexArrayObject;
-        private int _elementBufferObject;
+        // render vars
+        // private int _vertexBufferObject;
+        // private int _vertexArrayObject;
+        // private int _elementBufferObject;
         
         private Shader _shader;
+        private Shape _shape;
         
         private readonly float[] _vertices =
         [
@@ -25,6 +27,18 @@ namespace openTK_cooking
         [
             0, 1, 3,
             1, 2, 3
+        ];
+
+        private readonly float[] _trivertices =
+        [
+            -0.5f, -0.5f, 0.0f,
+            0.5f, -0.5f, 0.0f,
+            0.0f,  0.5f, 0.0f
+        ];
+            
+        private readonly uint[] _triindices =
+        [
+            0, 1, 2
         ];
         
         /// <summary>
@@ -44,6 +58,13 @@ namespace openTK_cooking
             {
                 Close();
             }
+
+            if (KeyboardState.IsKeyPressed(Keys.E))
+            {
+                _shape = new Shape(_trivertices, _triindices);
+                _shape.InitializeBuffers();
+                _shape.Render();
+            }
         }
     
         /// <summary>
@@ -57,28 +78,15 @@ namespace openTK_cooking
             base.OnLoad();
     
             _shader = new Shader(@"..\..\..\Resources\Shaders\shader.vert", @"..\..\..\Resources\Shaders\shader.frag");
-            
-            // VBO
-            _vertexBufferObject = GL.GenBuffer();
-            GL.BindBuffer(BufferTarget.ArrayBuffer, _vertexBufferObject);
-            GL.BufferData(BufferTarget.ArrayBuffer, _vertices.Length * sizeof(float), _vertices, BufferUsageHint.StaticDraw);
-            
-            // VAO
-            _vertexArrayObject = GL.GenVertexArray();
-            GL.BindVertexArray(_vertexArrayObject);
-            GL.VertexAttribPointer(0, 3, VertexAttribPointerType.Float, false, 3 * sizeof(float), 0);
-            GL.EnableVertexAttribArray(0);
-            
-            // EBO
-            _elementBufferObject = GL.GenBuffer();
-            GL.BindBuffer(BufferTarget.ElementArrayBuffer, _elementBufferObject);
-            GL.BufferData(BufferTarget.ElementArrayBuffer, _indices.Length * sizeof(uint), _indices, BufferUsageHint.StaticDraw);
+
+            _shape = new Shape(_vertices, _indices);
+            _shape.InitializeBuffers();
             
             GL.ClearColor(0.2f, 0.6f, 0.1f, 1.0f);
         }
         
         /// <summary>
-        ///  run on frame rendered
+        /// run on frame rendered
         /// </summary>
         /// <param name="e"></param>
         protected override void OnRenderFrame(FrameEventArgs e)
@@ -88,11 +96,8 @@ namespace openTK_cooking
             GL.Clear(ClearBufferMask.ColorBufferBit);
             
             _shader.Use();
-            // GL.BindVertexArray(_vertexArrayObject);
-            // GL.DrawArrays(PrimitiveType.Triangles, 0, 3);
             
-            GL.BindVertexArray(_vertexArrayObject);
-            GL.DrawElements(PrimitiveType.Triangles, _indices.Length, DrawElementsType.UnsignedInt, 0);
+            _shape.Render();
             
             SwapBuffers();
         }
@@ -113,7 +118,10 @@ namespace openTK_cooking
         /// </summary>
         protected override void OnUnload()
         {
+            base.OnUnload();
+            
             _shader.Dispose();
+            _shape.Dispose();
         }
     }
 }
