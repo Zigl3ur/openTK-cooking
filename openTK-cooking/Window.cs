@@ -1,4 +1,5 @@
-﻿using OpenTK.Graphics.OpenGL4;
+﻿using System.Diagnostics;
+using OpenTK.Graphics.OpenGL4;
 using OpenTK.Windowing.Common;
 using OpenTK.Windowing.Desktop;
 using OpenTK.Windowing.GraphicsLibraryFramework;
@@ -9,6 +10,8 @@ namespace openTK_cooking
     {
 
         private readonly string _windowTitle;
+
+        private Stopwatch _timer;
         
         private Shader _shader;
         private Shape _shape;
@@ -20,10 +23,11 @@ namespace openTK_cooking
         
         private readonly float[] _vertices =
         [
-            0.5f,  0.5f, 0.0f,  // top right
-            0.5f, -0.5f, 0.0f,  // bottom right
-            -0.5f, -0.5f, 0.0f,  // bottom left
-            -0.5f,  0.5f, 0.0f   // top left
+            // positions        // colors
+            0.5f,  0.5f, 0.0f,  1.0f, 0.8f, 0.0f, // top right
+            0.5f, -0.5f, 0.0f,  0.0f, 1.0f, 0.5f, // bottom right
+            -0.5f, -0.5f, 0.0f, 0.5f, 0.0f, 1.0f, // bottom left
+            -0.5f,  0.5f, 0.0f, 0.5f, 0.0f, 0.5f // top left
         ];
 
         private readonly uint[] _indices =
@@ -34,9 +38,10 @@ namespace openTK_cooking
 
         private readonly float[] _triVertices =
         [
-            -0.5f, -0.5f, 0.0f,
-            0.5f, -0.5f, 0.0f,
-            0.0f,  0.5f, 0.0f
+            // positions         // colors
+            -0.5f, -0.5f, 0.0f, 1.0f, 0.0f, 0.0f, // bottom right
+            0.5f, -0.5f, 0.0f,  0.0f, 1.0f, 0.0f, // bottom left
+            0.0f,  0.5f, 0.0f,  0.0f, 0.0f, 1.0f, // top
         ];
 
         private readonly uint[] _triIndices =
@@ -56,6 +61,7 @@ namespace openTK_cooking
             _windowTitle = title;
             // UpdateFrequency = 144.0;
             VSync = VSyncMode.On;
+            _timer = new Stopwatch();
         }
 
         /// <summary>
@@ -68,12 +74,14 @@ namespace openTK_cooking
 
             base.OnLoad();
 
+            _timer.Start();
+            
             _shader = new Shader(@"..\..\..\Resources\Shaders\shader.vert", @"..\..\..\Resources\Shaders\shader.frag");
 
-            _shape = new Shape(_vertices, _indices);
+            _shape = new Shape(_triVertices, _triIndices);
             _shape.InitializeBuffers();
 
-            GL.ClearColor(0.2f, 0.6f, 0.1f, 1.0f);
+            GL.ClearColor(0.2f, 0.0f, 0.6f, 1.0f);
         }
 
         /// <summary>
@@ -90,7 +98,7 @@ namespace openTK_cooking
 
             if (KeyboardState.IsKeyPressed(Keys.Space))
             {
-                _shape = new Shape(_triVertices, _triIndices);
+                _shape = new Shape(_vertices, _indices);
                 _shape.InitializeBuffers();
                 _shape.Render();
             }
@@ -110,6 +118,11 @@ namespace openTK_cooking
 
             _shader.Use();
 
+            double timeValue = _timer.Elapsed.TotalSeconds;
+            float greenValue = (float)Math.Sin(timeValue) / 2.0f + 0.5f;
+            int vertexColorLocation = GL.GetUniformLocation(_shader.Handle, "ourColor");
+            GL.Uniform4(vertexColorLocation, 0.0f, greenValue, 0.0f, 0.1f);
+            
             _shape.Render();
 
             SwapBuffers();

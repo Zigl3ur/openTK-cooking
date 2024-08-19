@@ -13,6 +13,8 @@ namespace openTK_cooking
         private readonly float[] _vertices;
         private readonly uint[] _indices;
         
+        private bool _disposedValue;
+        
         public Shape(float[] vertices, uint[] indices)
         {
             _vertices = vertices;
@@ -36,8 +38,11 @@ namespace openTK_cooking
             GL.BindVertexArray(_vertexArrayObject);
         
             // vertex attribs
-            GL.VertexAttribPointer(0, 3, VertexAttribPointerType.Float, false, 3 * sizeof(float), 0);
+            GL.VertexAttribPointer(0, 3, VertexAttribPointerType.Float, false, 6 * sizeof(float), 0);
             GL.EnableVertexAttribArray(0);
+            
+            GL.VertexAttribPointer(1, 3, VertexAttribPointerType.Float, false, 6 * sizeof(float), 3 * sizeof(float));
+            GL.EnableVertexAttribArray(1);
     
             // EBO
             _elementBufferObject = GL.GenBuffer();
@@ -57,14 +62,37 @@ namespace openTK_cooking
             GL.DrawElements(PrimitiveType.Triangles, _indices.Length, DrawElementsType.UnsignedInt, 0);
         }
     
+        
+        protected virtual void Dispose(bool disposing)
+        {
+            if (!_disposedValue)
+            {
+                GL.DeleteBuffer(_vertexBufferObject);
+                GL.DeleteBuffer(_elementBufferObject);
+                GL.DeleteVertexArray(_vertexArrayObject);
+
+                _disposedValue = true;
+            }
+        }
+        
         /// <summary>
         /// free all used resources from the shape
         /// </summary>
         public void Dispose()
         {
-            GL.DeleteBuffer(_vertexBufferObject);
-            GL.DeleteBuffer(_elementBufferObject);
-            GL.DeleteVertexArray(_vertexArrayObject);
+            Dispose(true);
+            GC.SuppressFinalize(this);
+        }
+        
+        /// <summary>
+        /// destructor
+        /// </summary>
+        ~Shape()
+        {
+            if (_disposedValue)
+            {
+                Console.WriteLine("GPU Resource leak! Did you forget to call Dispose()?");
+            }
         }
     }
 }

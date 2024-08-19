@@ -5,7 +5,7 @@ namespace openTK_cooking;
 public class Shader
 {
     // _handle is the result of the both shaders compiled
-    private readonly int _handle;
+    public readonly int Handle;
     private bool _disposedValue;
 
     public Shader(string vertexPath, string fragmentPath)
@@ -40,23 +40,23 @@ public class Shader
 
 
         // link both shaders together
-        _handle = GL.CreateProgram();
+        Handle = GL.CreateProgram();
 
-        GL.AttachShader(_handle, vertexShader);
-        GL.AttachShader(_handle, fragmentShader);
+        GL.AttachShader(Handle, vertexShader);
+        GL.AttachShader(Handle, fragmentShader);
 
-        GL.LinkProgram(_handle);
+        GL.LinkProgram(Handle);
 
-        GL.GetProgram(_handle, GetProgramParameterName.LinkStatus, out int shadersLinkSuccess);
+        GL.GetProgram(Handle, GetProgramParameterName.LinkStatus, out int shadersLinkSuccess);
         if (shadersLinkSuccess == 0)
         {
-            string infoLog = GL.GetProgramInfoLog(_handle);
+            string infoLog = GL.GetProgramInfoLog(Handle);
             Console.WriteLine(infoLog);
         }
 
         // clean up
-        GL.DetachShader(_handle, vertexShader);
-        GL.DetachShader(_handle, fragmentShader);
+        GL.DetachShader(Handle, vertexShader);
+        GL.DetachShader(Handle, fragmentShader);
         GL.DeleteShader(vertexShader);
         GL.DeleteShader(fragmentShader);
     }
@@ -66,27 +66,16 @@ public class Shader
     /// </summary>
     public void Use()
     {
-        GL.UseProgram(_handle);
+        GL.UseProgram(Handle);
     }
 
     protected virtual void Dispose(bool disposing)
     {
         if (!_disposedValue)
         {
-            GL.DeleteProgram(_handle);
+            GL.DeleteProgram(Handle);
 
             _disposedValue = true;
-        }
-    }
-
-    /// <summary>
-    /// destructor
-    /// </summary>
-    ~Shader()
-    {
-        if (_disposedValue)
-        {
-            Console.WriteLine("GPU Resource leak! Did you forget to call Dispose()?");
         }
     }
 
@@ -97,5 +86,16 @@ public class Shader
     {
         Dispose(true);
         GC.SuppressFinalize(this);
+    }
+    
+    /// <summary>
+    /// destructor
+    /// </summary>
+    ~Shader()
+    {
+        if (_disposedValue)
+        {
+            Console.WriteLine("GPU Resource leak! Did you forget to call Dispose()?");
+        }
     }
 }
