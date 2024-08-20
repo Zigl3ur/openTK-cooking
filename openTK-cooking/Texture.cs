@@ -7,6 +7,11 @@ namespace openTK_cooking
     {
         public readonly int Handle;
         private bool _disposedValue;
+        
+        /// <summary>
+        /// create a new texture
+        /// </summary>
+        /// <param name="texturePath"></param>
         public Texture(string texturePath)
         {
             Handle = GL.GenTexture();
@@ -27,9 +32,12 @@ namespace openTK_cooking
             GL.GenerateMipmap(GenerateMipmapTarget.Texture2D);
         }
 
-        public void Use()
+        /// <summary>
+        /// use the texture
+        /// </summary>
+        public void Use(TextureUnit unit = TextureUnit.Texture0)
         {
-            GL.ActiveTexture(TextureUnit.Texture0);
+            GL.ActiveTexture(unit);
             GL.BindTexture(TextureTarget.Texture2D, Handle);
         }
         
@@ -37,12 +45,15 @@ namespace openTK_cooking
         {
             if (!_disposedValue)
             {
-                GL.DeleteProgram(Handle);
+                GL.DeleteTexture(Handle);
 
                 _disposedValue = true;
             }
         }
         
+        /// <summary>
+        /// clean it
+        /// </summary>
         public void Dispose()
         {
             Dispose(true);
@@ -54,7 +65,7 @@ namespace openTK_cooking
         /// </summary>
         ~Texture()
         {
-            if (_disposedValue)
+            if (!_disposedValue)
             {
                 Console.WriteLine("GPU Resource leak! Did you forget to call Dispose()?");
             }

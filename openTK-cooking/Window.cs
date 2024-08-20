@@ -3,6 +3,7 @@ using OpenTK.Graphics.OpenGL4;
 using OpenTK.Windowing.Common;
 using OpenTK.Windowing.Desktop;
 using OpenTK.Windowing.GraphicsLibraryFramework;
+using ErrorCode = OpenTK.Graphics.OpenGL4.ErrorCode;
 
 namespace openTK_cooking
 {
@@ -15,7 +16,8 @@ namespace openTK_cooking
         
         private Shader _shader;
         private Shape _shape;
-        private Texture _texture;
+        private Texture _texture0;
+        private Texture _texture1;
 
         // fps counter vars
         private int _frameCount;
@@ -59,7 +61,7 @@ namespace openTK_cooking
             -0.5f,  0.5f, 0.0f, 0.0f, 1.0f  // top left
         ];
         
-        private readonly float[] _VtexVertices =
+        private readonly float[] _vtexVertices =
         [
             //Position          Texture coordinates
             0.5f,  0.5f, 0.0f, 1.0f, 1.0f, // top right
@@ -94,10 +96,14 @@ namespace openTK_cooking
             base.OnLoad();
 
             // _timer.Start();
-            
+
             _shader = new Shader(@"..\..\..\Resources\Shaders\shader.vert", @"..\..\..\Resources\Shaders\shader.frag");
 
-            _texture = new Texture(@"..\..\..\Resources\Textures\texture1.png");
+            _texture0 = new Texture(@"..\..\..\Resources\Textures\container.png");
+            _texture1 = new Texture(@"..\..\..\Resources\Textures\awesomeface.png");
+            
+            _shader.SetInt("texture0",0);
+            _shader.SetInt("texture1",1);
             
             _shape = new Shape(_texVertices, _indices, _shader);
             _shape.InitializeBuffers();
@@ -119,10 +125,10 @@ namespace openTK_cooking
 
             if (KeyboardState.IsKeyPressed(Keys.Space))
             {
-                _shape = new Shape(_texVertices, _indices, _shader);
-                _texture = new Texture(@"..\..\..\Resources\Textures\texture3.png");
-                _shape.InitializeBuffers();
-                _shape.Render();
+                // _shape = new Shape(_texVertices, _indices, _shader);
+                // _texture = new Texture(@"..\..\..\Resources\Textures\texture2.png");
+                // _shape.InitializeBuffers();
+                // _shape.Render();
             }
         }
 
@@ -138,15 +144,19 @@ namespace openTK_cooking
             
             GL.Clear(ClearBufferMask.ColorBufferBit);
 
+            _texture0.Use(TextureUnit.Texture0);
+            _texture1.Use(TextureUnit.Texture1);
+            
             _shader.Use();
 
-            double timeValue = _timer.Elapsed.TotalSeconds;
-            float greenValue = (float)Math.Sin(timeValue) / 2.0f + 0.5f;
-            int vertexColorLocation = GL.GetUniformLocation(_shader.Handle, "ourColor");
-            GL.Uniform4(vertexColorLocation, 0.0f, greenValue, 0.0f, 0.1f);
+            // used to make color change over time
+            // double timeValue = _timer.Elapsed.TotalSeconds;
+            // float greenValue = (float)Math.Sin(timeValue) / 2.0f + 0.5f;
+            // int vertexColorLocation = GL.GetUniformLocation(_shader.Handle, "ourColor");
+            // GL.Uniform4(vertexColorLocation, 0.0f, greenValue, 0.0f, 0.1f);
             
             _shape.Render();
-
+            
             SwapBuffers();
         }
 
@@ -170,7 +180,8 @@ namespace openTK_cooking
 
             _shader.Dispose();
             _shape.Dispose();
-            _texture.Dispose();
+            _texture0.Dispose();
+            _texture1.Dispose();
         }
 
         /// <summary>
@@ -193,6 +204,15 @@ namespace openTK_cooking
         
                 _frameCount = 0;
                 _timePassed = 0.0;
+            }
+        }
+
+        private void CheckError(string msg)
+        {
+            ErrorCode errorCode = GL.GetError();
+            if (errorCode != ErrorCode.NoError)
+            {
+                Console.WriteLine($"{msg} => {errorCode}");
             }
         }
     }

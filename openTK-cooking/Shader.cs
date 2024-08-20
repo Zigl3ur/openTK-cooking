@@ -5,7 +5,9 @@ namespace openTK_cooking;
 public class Shader
 {
     // _handle is the result of the both shaders compiled
+    // _uniformLocations is where shaders are
     public readonly int Handle;
+    private readonly Dictionary<string, int> _uniformLocations;
     private bool _disposedValue;
 
     public Shader(string vertexPath, string fragmentPath)
@@ -38,7 +40,6 @@ public class Shader
             Console.WriteLine(infoLog);
         }
 
-
         // link both shaders together
         Handle = GL.CreateProgram();
 
@@ -53,14 +54,31 @@ public class Shader
             string infoLog = GL.GetProgramInfoLog(Handle);
             Console.WriteLine(infoLog);
         }
-
+        
         // clean up
         GL.DetachShader(Handle, vertexShader);
         GL.DetachShader(Handle, fragmentShader);
         GL.DeleteShader(vertexShader);
         GL.DeleteShader(fragmentShader);
+        
+        // get number of active uniforms in the shader
+        GL.GetProgram(Handle, GetProgramParameterName.ActiveUniforms, out int numberOfUniforms);
+        
+        _uniformLocations = new Dictionary<string, int>();
+
+        for (int i = 0; i < numberOfUniforms; i++)
+        {
+            string key = GL.GetActiveUniform(Handle, i, out _, out _);
+            int location = GL.GetUniformLocation(Handle, key);
+            _uniformLocations.Add(key, location);
+        }
     }
 
+    /// <summary>
+    /// get shader var location
+    /// </summary>
+    /// <param name="attribName"> var name in the shader</param>
+    /// <returns></returns>
     public int GetAttribLocation(string attribName)
     {
         return GL.GetAttribLocation(Handle, attribName);
@@ -72,6 +90,12 @@ public class Shader
     public void Use()
     {
         GL.UseProgram(Handle);
+    }
+
+    public void SetInt(string name, int data)
+    {
+        GL.UseProgram(Handle);
+        GL.Uniform1(_uniformLocations[name], data);
     }
 
     protected virtual void Dispose(bool disposing)
@@ -98,9 +122,18 @@ public class Shader
     /// </summary>
     ~Shader()
     {
-        if (_disposedValue)
+        if (!_disposedValue)
         {
             Console.WriteLine("GPU Resource leak! Did you forget to call Dispose()?");
+        }
+    }
+    
+    private void CheckError(string msg)
+    {
+        ErrorCode errorCode = GL.GetError();
+        if (errorCode != ErrorCode.NoError)
+        {
+            Console.WriteLine($"{msg} => {errorCode}");
         }
     }
 }

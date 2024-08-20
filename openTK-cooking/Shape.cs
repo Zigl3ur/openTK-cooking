@@ -28,20 +28,21 @@ namespace openTK_cooking
         /// </summary>
         public void InitializeBuffers()
         {
-            // bind VBO, VAO and EBO
-    
-            // VBO
-            _vertexBufferObject = GL.GenBuffer();
-            GL.BindBuffer(BufferTarget.ArrayBuffer, _vertexBufferObject);
-            GL.BufferData(BufferTarget.ArrayBuffer, _vertices.Length * sizeof(float), _vertices, BufferUsageHint.StaticDraw);
+            // bind VAO, VBO and EBO
     
             // VAO
             _vertexArrayObject = GL.GenVertexArray();
             GL.BindVertexArray(_vertexArrayObject);
+            
+            // VBO
+            _vertexBufferObject = GL.GenBuffer();
+            GL.BindBuffer(BufferTarget.ArrayBuffer, _vertexBufferObject);
+            GL.BufferData(BufferTarget.ArrayBuffer, _vertices.Length * sizeof(float), _vertices, BufferUsageHint.StaticDraw);
         
             // vertex attribs
-            GL.VertexAttribPointer(_shader.GetAttribLocation("aPosition"), 3, VertexAttribPointerType.Float, false, 5 * sizeof(float), 0);
-            GL.EnableVertexAttribArray(0);
+            int positionLocation = _shader.GetAttribLocation("aPosition");
+            GL.VertexAttribPointer(positionLocation, 3, VertexAttribPointerType.Float, false, 5 * sizeof(float), 0);
+            GL.EnableVertexAttribArray(positionLocation);
 
             int texCoordLocation = _shader.GetAttribLocation("aTexCoord");
             GL.VertexAttribPointer(texCoordLocation, 2, VertexAttribPointerType.Float, false, 5 * sizeof(float), 3 * sizeof(float));
@@ -95,7 +96,7 @@ namespace openTK_cooking
         /// </summary>
         ~Shape()
         {
-            if (_disposedValue)
+            if (!_disposedValue)
             {
                 Console.WriteLine("GPU Resource leak! Did you forget to call Dispose()?");
             }
