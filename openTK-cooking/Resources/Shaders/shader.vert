@@ -1,11 +1,11 @@
 #version 330 core
-layout (location = 0) in vec3 aPos; // position var
-layout (location = 1) in vec3 aColor; // color var
+layout (location = 0) in vec3 aPosition; // position var
+layout (location = 1) in vec2 aTexCoord; // color var
 
-out vec3 ourColor;
+out vec2 texCoord;
 
-void main()
+void main(void)
 {
-    gl_Position = vec4(aPos, 1.0f);
-    ourColor = aColor;
+    texCoord = aTexCoord;
+    gl_Position = vec4(aPosition, 1.0f);
 }

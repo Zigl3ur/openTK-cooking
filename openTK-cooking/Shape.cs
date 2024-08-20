@@ -12,13 +12,15 @@ namespace openTK_cooking
         // data vars
         private readonly float[] _vertices;
         private readonly uint[] _indices;
+        private readonly Shader _shader;
         
         private bool _disposedValue;
         
-        public Shape(float[] vertices, uint[] indices)
+        public Shape(float[] vertices, uint[] indices, Shader shader)
         {
             _vertices = vertices;
             _indices = indices;
+            _shader = shader;
         }
     
         /// <summary>
@@ -38,11 +40,15 @@ namespace openTK_cooking
             GL.BindVertexArray(_vertexArrayObject);
         
             // vertex attribs
-            GL.VertexAttribPointer(0, 3, VertexAttribPointerType.Float, false, 6 * sizeof(float), 0);
+            GL.VertexAttribPointer(_shader.GetAttribLocation("aPosition"), 3, VertexAttribPointerType.Float, false, 5 * sizeof(float), 0);
             GL.EnableVertexAttribArray(0);
-            
-            GL.VertexAttribPointer(1, 3, VertexAttribPointerType.Float, false, 6 * sizeof(float), 3 * sizeof(float));
+
+            int texCoordLocation = _shader.GetAttribLocation("aTexCoord");
+            GL.VertexAttribPointer(texCoordLocation, 2, VertexAttribPointerType.Float, false, 5 * sizeof(float), 3 * sizeof(float));
             GL.EnableVertexAttribArray(1);
+            
+            // GL.VertexAttribPointer(1, 3, VertexAttribPointerType.Float, false, 6 * sizeof(float), 3 * sizeof(float));
+            // GL.EnableVertexAttribArray(1);
     
             // EBO
             _elementBufferObject = GL.GenBuffer();

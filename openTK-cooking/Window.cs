@@ -15,6 +15,7 @@ namespace openTK_cooking
         
         private Shader _shader;
         private Shape _shape;
+        private Texture _texture;
 
         // fps counter vars
         private int _frameCount;
@@ -38,10 +39,10 @@ namespace openTK_cooking
 
         private readonly float[] _triVertices =
         [
-            // positions         // colors
-            -0.5f, -0.5f, 0.0f, 1.0f, 0.0f, 0.0f, // bottom right
-            0.5f, -0.5f, 0.0f,  0.0f, 1.0f, 0.0f, // bottom left
-            0.0f,  0.5f, 0.0f,  0.0f, 0.0f, 1.0f, // top
+            // positions         // tex coords
+            -0.5f, -0.5f, 0.0f, 1.0f, 0.0f, // bottom right
+            0.5f, -0.5f, 0.0f,  0.0f, 0.0f, // bottom left
+            0.0f,  0.5f, 0.0f,  0.5f, 1.0f // top
         ];
 
         private readonly uint[] _triIndices =
@@ -49,6 +50,24 @@ namespace openTK_cooking
             0, 1, 2
         ];
 
+        private readonly float[] _texVertices =
+        [
+            //Position          Texture coordinates
+            0.5f,  0.5f, 0.0f, 1.0f, 1.0f, // top right
+            0.5f, -0.5f, 0.0f, 1.0f, 0.0f, // bottom right
+            -0.5f, -0.5f, 0.0f, 0.0f, 0.0f, // bottom left
+            -0.5f,  0.5f, 0.0f, 0.0f, 1.0f  // top left
+        ];
+        
+        private readonly float[] _VtexVertices =
+        [
+            //Position          Texture coordinates
+            0.5f,  0.5f, 0.0f, 1.0f, 1.0f, // top right
+            0.5f, -0.5f, 0.0f, 1.0f, 0.0f, // bottom right
+            -0.5f, -0.5f, 0.0f, 0.0f, 0.0f, // bottom left
+            -0.5f,  0.5f, 0.0f, 0.0f, 1.0f  // top left
+        ];
+        
         /// <summary>
         /// constructor to create a window
         /// </summary>
@@ -74,11 +93,13 @@ namespace openTK_cooking
 
             base.OnLoad();
 
-            _timer.Start();
+            // _timer.Start();
             
             _shader = new Shader(@"..\..\..\Resources\Shaders\shader.vert", @"..\..\..\Resources\Shaders\shader.frag");
 
-            _shape = new Shape(_triVertices, _triIndices);
+            _texture = new Texture(@"..\..\..\Resources\Textures\texture1.png");
+            
+            _shape = new Shape(_texVertices, _indices, _shader);
             _shape.InitializeBuffers();
 
             GL.ClearColor(0.2f, 0.0f, 0.6f, 1.0f);
@@ -98,7 +119,8 @@ namespace openTK_cooking
 
             if (KeyboardState.IsKeyPressed(Keys.Space))
             {
-                _shape = new Shape(_vertices, _indices);
+                _shape = new Shape(_texVertices, _indices, _shader);
+                _texture = new Texture(@"..\..\..\Resources\Textures\texture3.png");
                 _shape.InitializeBuffers();
                 _shape.Render();
             }
@@ -148,6 +170,7 @@ namespace openTK_cooking
 
             _shader.Dispose();
             _shape.Dispose();
+            _texture.Dispose();
         }
 
         /// <summary>

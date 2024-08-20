@@ -61,6 +61,11 @@ public class Shader
         GL.DeleteShader(fragmentShader);
     }
 
+    public int GetAttribLocation(string attribName)
+    {
+        return GL.GetAttribLocation(Handle, attribName);
+    }
+    
     /// <summary>
     /// use the shader
     /// </summary>
