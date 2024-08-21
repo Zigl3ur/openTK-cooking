@@ -1,4 +1,5 @@
 using OpenTK.Graphics.OpenGL4;
+using OpenTK.Mathematics;
 
 namespace openTK_cooking;
 
@@ -30,7 +31,7 @@ public class Shader
             string infoLog = GL.GetShaderInfoLog(vertexShader);
             Console.WriteLine(infoLog);
         }
-
+        
         // compile fragment shader and log
         GL.CompileShader(fragmentShader);
         GL.GetShader(fragmentShader, ShaderParameter.CompileStatus, out int successFragmentShader);
@@ -92,12 +93,19 @@ public class Shader
         GL.UseProgram(Handle);
     }
 
+    // set up shaders uniforms
     public void SetInt(string name, int data)
     {
         GL.UseProgram(Handle);
         GL.Uniform1(_uniformLocations[name], data);
     }
 
+    public void SetMatrix4(string name, Matrix4 data)
+    {
+        GL.UseProgram(Handle);
+        GL.UniformMatrix4(_uniformLocations[name], true, ref data);
+    }
+    
     protected virtual void Dispose(bool disposing)
     {
         if (!_disposedValue)

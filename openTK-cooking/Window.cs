@@ -1,5 +1,6 @@
 ﻿using System.Diagnostics;
 using OpenTK.Graphics.OpenGL4;
+using OpenTK.Mathematics;
 using OpenTK.Windowing.Common;
 using OpenTK.Windowing.Desktop;
 using OpenTK.Windowing.GraphicsLibraryFramework;
@@ -12,7 +13,7 @@ namespace openTK_cooking
 
         private readonly string _windowTitle;
 
-        private Stopwatch _timer;
+        // private Stopwatch _timer;
         
         private Shader _shader;
         private Shape _shape;
@@ -82,7 +83,7 @@ namespace openTK_cooking
             _windowTitle = title;
             // UpdateFrequency = 144.0;
             VSync = VSyncMode.On;
-            _timer = new Stopwatch();
+            // _timer = new Stopwatch();
         }
 
         /// <summary>
@@ -104,6 +105,9 @@ namespace openTK_cooking
             
             _shader.SetInt("texture0",0);
             _shader.SetInt("texture1",1);
+            
+            Matrix4 trans = Matrix4.CreateScale(1.0f, 1.0f, 1.0f);
+            _shader.SetMatrix4("transform", trans);
             
             _shape = new Shape(_texVertices, _indices, _shader);
             _shape.InitializeBuffers();
@@ -129,6 +133,12 @@ namespace openTK_cooking
                 // _texture = new Texture(@"..\..\..\Resources\Textures\texture2.png");
                 // _shape.InitializeBuffers();
                 // _shape.Render();
+
+                Matrix4 rotation = Matrix4.CreateRotationZ(MathHelper.DegreesToRadians(180.0f));
+                Matrix4 scale = Matrix4.CreateScale(1.0f, 1.0f, 1.0f);
+                Matrix4 trans = rotation * scale;
+                
+                _shader.SetMatrix4("transform", trans);
             }
         }
 
