@@ -66,7 +66,7 @@ namespace openTK_cooking
         public void Render()
         {
             GL.BindVertexArray(_vertexArrayObject);
-            GL.DrawElements(PrimitiveType.Triangles, _indices.Length, DrawElementsType.UnsignedInt, 0);
+            GL.DrawArrays(PrimitiveType.Triangles, 0, _vertices.Length);
         }
     
         

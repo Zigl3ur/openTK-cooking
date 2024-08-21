@@ -12,63 +12,75 @@ namespace openTK_cooking
     {
 
         private readonly string _windowTitle;
+        private readonly int _width;
+        private readonly int _height;
 
         // private Stopwatch _timer;
+        private double _time;
+        
+        private Matrix4 _model;
+        private Matrix4 _view;
+        private Matrix4 _projection;
         
         private Shader _shader;
         private Shape _shape;
         private Texture _texture0;
         private Texture _texture1;
-
+        
         // fps counter vars
         private int _frameCount;
         private double _timePassed;
         private double _fps;
         
-        private readonly float[] _vertices =
+        float[] _vertices =
         [
-            // positions        // colors
-            0.5f,  0.5f, 0.0f,  1.0f, 0.8f, 0.0f, // top right
-            0.5f, -0.5f, 0.0f,  0.0f, 1.0f, 0.5f, // bottom right
-            -0.5f, -0.5f, 0.0f, 0.5f, 0.0f, 1.0f, // bottom left
-            -0.5f,  0.5f, 0.0f, 0.5f, 0.0f, 0.5f // top left
+            -0.5f, -0.5f, -0.5f,  0.0f, 0.0f,
+            0.5f, -0.5f, -0.5f,  1.0f, 0.0f,
+            0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
+            0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
+            -0.5f,  0.5f, -0.5f,  0.0f, 1.0f,
+            -0.5f, -0.5f, -0.5f,  0.0f, 0.0f,
+
+            -0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
+            0.5f, -0.5f,  0.5f,  1.0f, 0.0f,
+            0.5f,  0.5f,  0.5f,  1.0f, 1.0f,
+            0.5f,  0.5f,  0.5f,  1.0f, 1.0f,
+            -0.5f,  0.5f,  0.5f,  0.0f, 1.0f,
+            -0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
+
+            -0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
+            -0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
+            -0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
+            -0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
+            -0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
+            -0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
+
+            0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
+            0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
+            0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
+            0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
+            0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
+            0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
+
+            -0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
+            0.5f, -0.5f, -0.5f,  1.0f, 1.0f,
+            0.5f, -0.5f,  0.5f,  1.0f, 0.0f,
+            0.5f, -0.5f,  0.5f,  1.0f, 0.0f,
+            -0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
+            -0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
+
+            -0.5f,  0.5f, -0.5f,  0.0f, 1.0f,
+            0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
+            0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
+            0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
+            -0.5f,  0.5f,  0.5f,  0.0f, 0.0f,
+            -0.5f,  0.5f, -0.5f,  0.0f, 1.0f
         ];
 
         private readonly uint[] _indices =
         [
             0, 1, 3,
             1, 2, 3
-        ];
-
-        private readonly float[] _triVertices =
-        [
-            // positions         // tex coords
-            -0.5f, -0.5f, 0.0f, 1.0f, 0.0f, // bottom right
-            0.5f, -0.5f, 0.0f,  0.0f, 0.0f, // bottom left
-            0.0f,  0.5f, 0.0f,  0.5f, 1.0f // top
-        ];
-
-        private readonly uint[] _triIndices =
-        [
-            0, 1, 2
-        ];
-
-        private readonly float[] _texVertices =
-        [
-            //Position          Texture coordinates
-            0.5f,  0.5f, 0.0f, 1.0f, 1.0f, // top right
-            0.5f, -0.5f, 0.0f, 1.0f, 0.0f, // bottom right
-            -0.5f, -0.5f, 0.0f, 0.0f, 0.0f, // bottom left
-            -0.5f,  0.5f, 0.0f, 0.0f, 1.0f  // top left
-        ];
-        
-        private readonly float[] _vtexVertices =
-        [
-            //Position          Texture coordinates
-            0.5f,  0.5f, 0.0f, 1.0f, 1.0f, // top right
-            0.5f, -0.5f, 0.0f, 1.0f, 0.0f, // bottom right
-            -0.5f, -0.5f, 0.0f, 0.0f, 0.0f, // bottom left
-            -0.5f,  0.5f, 0.0f, 0.0f, 1.0f  // top left
         ];
         
         /// <summary>
@@ -81,6 +93,8 @@ namespace openTK_cooking
             new NativeWindowSettings() { ClientSize = (width, height), Title = title })
         {
             _windowTitle = title;
+            _width = width;
+            _height = height;
             // UpdateFrequency = 144.0;
             VSync = VSyncMode.On;
             // _timer = new Stopwatch();
@@ -91,6 +105,8 @@ namespace openTK_cooking
         /// </summary>
         protected override void OnLoad()
         {
+            GL.Enable(EnableCap.DepthTest);
+            
             Console.WriteLine(GL.GetString(StringName.Renderer));
             Console.WriteLine(GL.GetString(StringName.Version));
 
@@ -100,16 +116,19 @@ namespace openTK_cooking
 
             _shader = new Shader(@"..\..\..\Resources\Shaders\shader.vert", @"..\..\..\Resources\Shaders\shader.frag");
 
-            _texture0 = new Texture(@"..\..\..\Resources\Textures\container.png");
-            _texture1 = new Texture(@"..\..\..\Resources\Textures\awesomeface.png");
+            _texture0 = new Texture(@"..\..\..\Resources\Textures\texture1.png");
+            // _texture1 = new Texture(@"..\..\..\Resources\Textures\awesomeface.png");
             
             _shader.SetInt("texture0",0);
-            _shader.SetInt("texture1",1);
+            // _shader.SetInt("texture1",1);
             
-            Matrix4 trans = Matrix4.CreateScale(1.0f, 1.0f, 1.0f);
-            _shader.SetMatrix4("transform", trans);
+            _view = Matrix4.CreateTranslation(0.0f, 0.0f, -3.0f);
+            _projection = Matrix4.CreatePerspectiveFieldOfView(MathHelper.DegreesToRadians(45.0f), _width / _height, 0.1f, 100.0f);
             
-            _shape = new Shape(_texVertices, _indices, _shader);
+            // Matrix4 trans = Matrix4.CreateScale(1.0f, 1.0f, 1.0f);
+            // _shader.SetMatrix4("transform", trans);
+            
+            _shape = new Shape(_vertices, _indices, _shader);
             _shape.InitializeBuffers();
 
             GL.ClearColor(0.2f, 0.0f, 0.6f, 1.0f);
@@ -134,11 +153,11 @@ namespace openTK_cooking
                 // _shape.InitializeBuffers();
                 // _shape.Render();
 
-                Matrix4 rotation = Matrix4.CreateRotationZ(MathHelper.DegreesToRadians(180.0f));
-                Matrix4 scale = Matrix4.CreateScale(1.0f, 1.0f, 1.0f);
-                Matrix4 trans = rotation * scale;
+                // Matrix4 rotation = Matrix4.CreateRotationZ(MathHelper.DegreesToRadians(180.0f));
+                // Matrix4 scale = Matrix4.CreateScale(1.0f, 1.0f, 1.0f);
+                // Matrix4 trans = rotation * scale;
                 
-                _shader.SetMatrix4("transform", trans);
+                // _shader.SetMatrix4("transform", trans);
             }
         }
 
@@ -149,13 +168,21 @@ namespace openTK_cooking
         protected override void OnRenderFrame(FrameEventArgs e)
         {
             base.OnRenderFrame(e);
+            
+            _time += 25.0 * e.Time;
 
             this.FpsCounter(e);
             
-            GL.Clear(ClearBufferMask.ColorBufferBit);
-
+            GL.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
+            
             _texture0.Use(TextureUnit.Texture0);
-            _texture1.Use(TextureUnit.Texture1);
+            // _texture1.Use(TextureUnit.Texture1);
+            
+            _model = Matrix4.Identity * Matrix4.CreateRotationX((float)MathHelper.DegreesToRadians(_time));
+            
+            _shader.SetMatrix4("model", _model);
+            _shader.SetMatrix4("view", _view);
+            _shader.SetMatrix4("projection", _projection);
             
             _shader.Use();
 
@@ -191,7 +218,7 @@ namespace openTK_cooking
             _shader.Dispose();
             _shape.Dispose();
             _texture0.Dispose();
-            _texture1.Dispose();
+            // _texture1.Dispose();
         }
 
         /// <summary>
