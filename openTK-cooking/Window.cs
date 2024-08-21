@@ -31,8 +31,8 @@ namespace openTK_cooking
         private int _frameCount;
         private double _timePassed;
         private double _fps;
-        
-        float[] _vertices =
+
+        private readonly float[] _vertices =
         [
             -0.5f, -0.5f, -0.5f,  0.0f, 0.0f,
             0.5f, -0.5f, -0.5f,  1.0f, 0.0f,
@@ -178,7 +178,7 @@ namespace openTK_cooking
             _texture0.Use(TextureUnit.Texture0);
             // _texture1.Use(TextureUnit.Texture1);
             
-            _model = Matrix4.Identity * Matrix4.CreateRotationX((float)MathHelper.DegreesToRadians(_time));
+            _model = Matrix4.Identity * Matrix4.CreateRotationX((float)MathHelper.DegreesToRadians(_time)) * Matrix4.CreateRotationY((float)MathHelper.DegreesToRadians(_time));
             
             _shader.SetMatrix4("model", _model);
             _shader.SetMatrix4("view", _view);
