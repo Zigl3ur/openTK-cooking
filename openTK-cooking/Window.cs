@@ -21,6 +21,11 @@ namespace openTK_cooking
         private Matrix4 _model;
         private Matrix4 _view;
         private Matrix4 _projection;
+
+        private Camera _camera;
+        private Inputs _inputs;
+        
+        private Vector3 _cube2Position = new Vector3(1.5f, 0.0f, 0.0f);
         
         private Shader _shader;
         private Shape _shape;
@@ -114,16 +119,20 @@ namespace openTK_cooking
 
             // _timer.Start();
 
+            _view = Matrix4.CreateTranslation(0.0f, 0.0f, -3.0f);
+            _projection = Matrix4.CreatePerspectiveFieldOfView(MathHelper.DegreesToRadians(45.0f), _width / _height, 0.1f, 100.0f);
+
+            _camera = new Camera(Vector3.UnitZ * 3, Size.X / (float)Size.Y);
+
+            _inputs = new Inputs(0.1f, _camera.Position, _camera.Up, _camera.Front);
+            
             _shader = new Shader(@"..\..\..\Resources\Shaders\shader.vert", @"..\..\..\Resources\Shaders\shader.frag");
 
             _texture0 = new Texture(@"..\..\..\Resources\Textures\texture1.png");
-            // _texture1 = new Texture(@"..\..\..\Resources\Textures\awesomeface.png");
+            _texture1 = new Texture(@"..\..\..\Resources\Textures\texture2.png");
             
             _shader.SetInt("texture0",0);
-            // _shader.SetInt("texture1",1);
-            
-            _view = Matrix4.CreateTranslation(0.0f, 0.0f, -3.0f);
-            _projection = Matrix4.CreatePerspectiveFieldOfView(MathHelper.DegreesToRadians(45.0f), _width / _height, 0.1f, 100.0f);
+            // _shader.SetInt("texture1",0);
             
             // Matrix4 trans = Matrix4.CreateScale(1.0f, 1.0f, 1.0f);
             // _shader.SetMatrix4("transform", trans);
@@ -140,25 +149,8 @@ namespace openTK_cooking
         protected override void OnUpdateFrame(FrameEventArgs e)
         {
             base.OnUpdateFrame(e);
-
-            if (KeyboardState.IsKeyDown(Keys.Escape))
-            {
-                Close();
-            }
-
-            if (KeyboardState.IsKeyPressed(Keys.Space))
-            {
-                // _shape = new Shape(_texVertices, _indices, _shader);
-                // _texture = new Texture(@"..\..\..\Resources\Textures\texture2.png");
-                // _shape.InitializeBuffers();
-                // _shape.Render();
-
-                // Matrix4 rotation = Matrix4.CreateRotationZ(MathHelper.DegreesToRadians(180.0f));
-                // Matrix4 scale = Matrix4.CreateScale(1.0f, 1.0f, 1.0f);
-                // Matrix4 trans = rotation * scale;
-                
-                // _shader.SetMatrix4("transform", trans);
-            }
+            
+            _inputs.ListenInputs(this, _camera, KeyboardState, MouseState, IsFocused);
         }
 
         /// <summary>
@@ -171,18 +163,19 @@ namespace openTK_cooking
             
             _time += 25.0 * e.Time;
 
+            Console.WriteLine(_camera.Position);
+            
             this.FpsCounter(e);
             
             GL.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
             
             _texture0.Use(TextureUnit.Texture0);
-            // _texture1.Use(TextureUnit.Texture1);
             
             _model = Matrix4.Identity * Matrix4.CreateRotationX((float)MathHelper.DegreesToRadians(_time)) * Matrix4.CreateRotationY((float)MathHelper.DegreesToRadians(_time));
             
             _shader.SetMatrix4("model", _model);
-            _shader.SetMatrix4("view", _view);
-            _shader.SetMatrix4("projection", _projection);
+            _shader.SetMatrix4("view", _camera.GetViewMatrix());
+            _shader.SetMatrix4("projection", _camera.GetProjectionMatrix());
             
             _shader.Use();
 
@@ -192,6 +185,13 @@ namespace openTK_cooking
             // int vertexColorLocation = GL.GetUniformLocation(_shader.Handle, "ourColor");
             // GL.Uniform4(vertexColorLocation, 0.0f, greenValue, 0.0f, 0.1f);
             
+            _shape.Render();
+            
+            _texture1.Use(TextureUnit.Texture0);
+            Matrix4 model2 = Matrix4.Identity * Matrix4.CreateTranslation(_cube2Position)
+                                              * Matrix4.CreateRotationX((float)MathHelper.DegreesToRadians(_time))
+                                              * Matrix4.CreateRotationY((float)MathHelper.DegreesToRadians(-_time)); // Rotating in the opposite direction
+            _shader.SetMatrix4("model", model2);
             _shape.Render();
             
             SwapBuffers();
@@ -244,13 +244,19 @@ namespace openTK_cooking
             }
         }
 
-        private void CheckError(string msg)
+        protected override void OnMouseWheel(MouseWheelEventArgs e)
         {
-            ErrorCode errorCode = GL.GetError();
-            if (errorCode != ErrorCode.NoError)
-            {
-                Console.WriteLine($"{msg} => {errorCode}");
-            }
+            base.OnMouseWheel(e);
+
+            _camera.Fov -= e.OffsetY;
+        }
+
+        protected override void OnResize(ResizeEventArgs e)
+        {
+            base.OnResize(e);
+
+            GL.Viewport(0, 0, Size.X, Size.Y);
+            _camera.AspectRatio = Size.X / (float)Size.Y;
         }
     }
 }
