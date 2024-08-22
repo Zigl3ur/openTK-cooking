@@ -3,30 +3,29 @@ using OpenTK.Graphics.OpenGL4;
 using OpenTK.Mathematics;
 using OpenTK.Windowing.Common;
 using OpenTK.Windowing.Desktop;
-using OpenTK.Windowing.GraphicsLibraryFramework;
-using ErrorCode = OpenTK.Graphics.OpenGL4.ErrorCode;
 
 namespace openTK_cooking
 {
     public class Window : GameWindow
     {
 
+        // window vars
         private readonly string _windowTitle;
         private readonly int _width;
         private readonly int _height;
-
-        // private Stopwatch _timer;
+        
         private double _time;
         
+        // Matrixs vars
         private Matrix4 _model;
         private Matrix4 _view;
         private Matrix4 _projection;
 
+        // camera / contreols vars
         private Camera _camera;
         private Inputs _inputs;
         
-        private Vector3 _cube2Position = new Vector3(1.5f, 0.0f, 0.0f);
-        
+        // render object vars
         private Shader _shader;
         private Shape _shape;
         private Texture _texture0;
@@ -102,7 +101,7 @@ namespace openTK_cooking
             _height = height;
             // UpdateFrequency = 144.0;
             VSync = VSyncMode.On;
-            // _timer = new Stopwatch();
+            CursorState = CursorState.Grabbed;
         }
 
         /// <summary>
@@ -110,14 +109,12 @@ namespace openTK_cooking
         /// </summary>
         protected override void OnLoad()
         {
-            GL.Enable(EnableCap.DepthTest);
+            base.OnLoad();
             
             Console.WriteLine(GL.GetString(StringName.Renderer));
             Console.WriteLine(GL.GetString(StringName.Version));
-
-            base.OnLoad();
-
-            // _timer.Start();
+            
+            GL.Enable(EnableCap.DepthTest);
 
             _view = Matrix4.CreateTranslation(0.0f, 0.0f, -3.0f);
             _projection = Matrix4.CreatePerspectiveFieldOfView(MathHelper.DegreesToRadians(45.0f), _width / _height, 0.1f, 100.0f);
@@ -132,12 +129,9 @@ namespace openTK_cooking
             _texture1 = new Texture(@"..\..\..\Resources\Textures\texture2.png");
             
             _shader.SetInt("texture0",0);
-            // _shader.SetInt("texture1",0);
-            
-            // Matrix4 trans = Matrix4.CreateScale(1.0f, 1.0f, 1.0f);
-            // _shader.SetMatrix4("transform", trans);
             
             _shape = new Shape(_vertices, _indices, _shader);
+            
             _shape.InitializeBuffers();
 
             GL.ClearColor(0.2f, 0.0f, 0.6f, 1.0f);
@@ -178,19 +172,12 @@ namespace openTK_cooking
             _shader.SetMatrix4("projection", _camera.GetProjectionMatrix());
             
             _shader.Use();
-
-            // used to make color change over time
-            // double timeValue = _timer.Elapsed.TotalSeconds;
-            // float greenValue = (float)Math.Sin(timeValue) / 2.0f + 0.5f;
-            // int vertexColorLocation = GL.GetUniformLocation(_shader.Handle, "ourColor");
-            // GL.Uniform4(vertexColorLocation, 0.0f, greenValue, 0.0f, 0.1f);
             
             _shape.Render();
             
             _texture1.Use(TextureUnit.Texture0);
-            Matrix4 model2 = Matrix4.Identity * Matrix4.CreateTranslation(_cube2Position)
-                                              * Matrix4.CreateRotationX((float)MathHelper.DegreesToRadians(_time))
-                                              * Matrix4.CreateRotationY((float)MathHelper.DegreesToRadians(-_time)); // Rotating in the opposite direction
+            
+            Matrix4 model2 = Matrix4.Identity * Matrix4.CreateTranslation(new Vector3(1.5f, 0.0f, 0.0f)) * Matrix4.CreateRotationX((float)MathHelper.DegreesToRadians(_time)) * Matrix4.CreateRotationY((float)MathHelper.DegreesToRadians(-_time)); // Rotating in the opposite direction
             _shader.SetMatrix4("model", model2);
             _shape.Render();
             
@@ -218,7 +205,7 @@ namespace openTK_cooking
             _shader.Dispose();
             _shape.Dispose();
             _texture0.Dispose();
-            // _texture1.Dispose();
+            _texture1.Dispose();
         }
 
         /// <summary>

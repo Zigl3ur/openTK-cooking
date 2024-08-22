@@ -47,9 +47,6 @@ namespace openTK_cooking
             int texCoordLocation = _shader.GetAttribLocation("aTexCoord");
             GL.VertexAttribPointer(texCoordLocation, 2, VertexAttribPointerType.Float, false, 5 * sizeof(float), 3 * sizeof(float));
             GL.EnableVertexAttribArray(1);
-            
-            // GL.VertexAttribPointer(1, 3, VertexAttribPointerType.Float, false, 6 * sizeof(float), 3 * sizeof(float));
-            // GL.EnableVertexAttribArray(1);
     
             // EBO
             _elementBufferObject = GL.GenBuffer();

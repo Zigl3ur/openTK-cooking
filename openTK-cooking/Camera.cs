@@ -86,13 +86,19 @@ namespace openTK_cooking
             }
         }
 
-        // Get the view matrix using the amazing LookAt function described more in depth on the web tutorials
+        /// <summary>
+        /// Get camera view Matrix
+        /// </summary>
+        /// <returns></returns>
         public Matrix4 GetViewMatrix()
         {
             return Matrix4.LookAt(Position, Position + _front, _up);
         }
 
-        // Get the projection matrix using the same method we have used up until this point
+        /// <summary>
+        /// Get Camera projection Matrix
+        /// </summary>
+        /// <returns></returns>
         public Matrix4 GetProjectionMatrix()
         {
             return Matrix4.CreatePerspectiveFieldOfView(_fov, AspectRatio, 0.01f, 100f);

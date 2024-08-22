@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("openTK-cooking")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+685db411cee99c18dbcf017d5d437604e6af82b8")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+305cc20483ee910269587056b36106c86bcd5bd8")]
 [assembly: System.Reflection.AssemblyProductAttribute("openTK-cooking")]
 [assembly: System.Reflection.AssemblyTitleAttribute("openTK-cooking")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
